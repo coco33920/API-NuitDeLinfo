@@ -20,7 +20,6 @@
     "eslint": "^8.22.0",
     "eslint-plugin-vue": "^9.3.0",
     "prettier": "^2.7.1",
-    "vite": "^3.2.4",
-    "sass": "^1.49.11"
+    "vite": "^3.2.4"
   }
 }
