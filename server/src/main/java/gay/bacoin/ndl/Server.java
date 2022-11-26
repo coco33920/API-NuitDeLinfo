@@ -1,4 +1,4 @@
-package gay.bacoin.nuitdelinfoserver;
+package gay.bacoin.ndl;
 
 import static spark.Spark.*;
 
