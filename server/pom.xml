@@ -30,7 +30,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>fr.charlotte.Main</mainClass>
+                            <mainClass>gay.bacoin.nuitdelinfoserver.Server</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
@@ -54,7 +54,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>fr.charlotte.Main</mainClass>
+                            <mainClass>gay.bacoin.nuitdelinfoserver.Server</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

@@ -1,8 +1,8 @@
-package fr.charlotte;
+package gay.bacoin.nuitdelinfoserver;
 
 import static spark.Spark.*;
 
-public class Main {
+public class Server {
     public static void main(String[] args) {
         ipAddress("127.0.0.1");
         port(8080);
