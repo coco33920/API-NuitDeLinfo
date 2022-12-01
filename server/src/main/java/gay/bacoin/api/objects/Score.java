@@ -2,8 +2,8 @@ package gay.bacoin.api.objects;
 
 public class Score {
 
-    private String username;
-    private int score;
+    private final String username;
+    private final int score;
 
     public Score(String username,int score){
         this.username = username;

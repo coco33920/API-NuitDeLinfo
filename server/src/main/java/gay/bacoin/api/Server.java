@@ -17,6 +17,8 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -69,6 +71,38 @@ public class Server {
     private static void setupDatabase(){
         String sql = "create table if not exists leaderboard(id integer constraint id primary key autoincrement ,pseudo text,score int);";
         databaseLite.update(sql);
+    }
+
+    private static void addScoreInDatabase(Score s){
+        String sql = "select * from leaderboard where pseudo=\""+s.getUsername()+"\"";
+        String u = "";
+        ResultSet rs = databaseLite.getResult(sql);
+        try {
+            if(!rs.next()){
+                u = String.format("insert into leaderboard(pseudo,score) VALUES(\"%s\",%d)",s.getUsername(),s.getScore());
+            }else{
+                u = String.format("update leaderboard set score=%d where pseudo=\"%s\"",s.getScore(),s.getUsername());
+            }
+        } catch (SQLException e) {
+            u = String.format("insert into leaderboard(pseudo,score) VALUES(\"%s\",%d)",s.getUsername(),s.getScore());
+        }
+        databaseLite.update(u);
+    }
+
+    private static ArrayList<Score> getLeaderBoard(){
+        String sql = "select * from leaderboard SORT ORDER BY score DESC LIMIT 10";
+        ArrayList<Score> s = new ArrayList<>();
+        ResultSet rs = databaseLite.getResult(sql);
+        while (true){
+            try {
+                if (!rs.next()) break;
+                Score sv = new Score(rs.getString("pseudo"),rs.getInt("score"));
+                s.add(sv);
+            } catch (SQLException e) {
+                return s;
+            }
+        }
+        return s;
     }
 
     public static void main(String[] args) throws IOException, InterruptedException {
@@ -272,5 +306,25 @@ public class Server {
             response.type("application/json");
             return new Gson().toJson(p);
         }));
+        post("/score",(request, response) -> {
+            String body = request.body();
+            Score s = null;
+            try{
+                s = new Gson().fromJson(body,Score.class);
+                if(s.getUsername() == null){
+                    return "{\"success\":false}";
+                }
+                addScoreInDatabase(s);
+                response.type("application/json");
+                return "{\"success\":true}";
+            }catch (Exception e){
+                return "{\"success\":false}";
+            }
+        });
+        get("/leaderboard", (request, response) -> {
+            ArrayList<Score> s = getLeaderBoard();
+            response.type("application/json");
+            return new Gson().toJson(s);
+        });
     }
 }
