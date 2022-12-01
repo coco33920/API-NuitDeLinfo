@@ -1,5 +1,7 @@
 package gay.bacoin.api.objects;
 
+import gay.bacoin.api.objects.disease.Disease;
+
 import java.util.HashMap;
 import java.util.Random;
 

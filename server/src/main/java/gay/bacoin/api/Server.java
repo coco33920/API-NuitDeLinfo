@@ -4,9 +4,13 @@ import com.github.javafaker.Faker;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import gay.bacoin.api.database.DatabaseLite;
 import gay.bacoin.api.objects.*;
+import gay.bacoin.api.objects.disease.Disease;
+import gay.bacoin.api.objects.disease.DiseasesDeserializer;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.URI;
@@ -39,8 +43,33 @@ public class Server {
         "In condimentum dapibus luctus. Nunc ultrices lobortis quam, non sollicitudin augue. Suspendisse efficitur ex ex, non accumsan risus tristique vel. Ut aliquet lacinia mollis. Donec sit amet diam vitae urna sagittis ornare. Nullam interdum blandit mi id malesuada. Duis metus ligula, maximus ac sollicitudin ac, tempus sit amet massa. Morbi vulputate odio quis turpis posuere hendrerit. In pharetra nulla venenatis, semper diam a, consectetur tellus. Fusce eu accumsan odio. Aliquam erat volutpat. Donec suscipit urna turpis, ultricies ullamcorper justo luctus vitae. Donec elementum auctor nunc, vitae vestibulum elit consequat a. Aenean sed risus efficitur, porta ante ac, tincidunt turpis. Sed sit amet justo a mi pharetra gravida. Vestibulum iaculis risus nisl, non congue neque.";
 
     private static ArrayList<String> latinWords;
+    private static DatabaseLite databaseLite;
 
     //TODO: session client
+
+    private static File getHomeDatabaseFile(){
+        String home = System.getProperty("user.home");
+        String delimiter = File.separator;
+        File f = new File(home + delimiter + ".gaybacoin" + delimiter);
+        if (!f.exists())
+            f.mkdirs();
+        File file = new File(f.getAbsolutePath() + delimiter + "home.db");
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        System.out.println("Database file loaded to " + file.getAbsolutePath());
+        return file;
+    }
+
+    private static void setupDatabase(){
+        String sql = "create table if not exists leaderboard(id integer constraint id primary key autoincrement ,pseudo text,score int);";
+        databaseLite.update(sql);
+    }
 
     public static void main(String[] args) throws IOException, InterruptedException {
         ipAddress("0.0.0.0");
@@ -63,6 +92,11 @@ public class Server {
             }).map(s -> s.substring(0, 1).toUpperCase() + s.substring(1))).forEach(el -> words.addAll(el.collect(Collectors.toList())));
         latinWords = words;
         System.out.println("All ready to go!");
+        File databaseFile = getHomeDatabaseFile();
+        databaseLite = new DatabaseLite(databaseFile.getAbsolutePath());
+        System.out.println("Database loaded");
+        setupDatabase();
+        System.out.println("Database fully loaded :)");
     }
 
     private static void getAllDiseases() throws IOException, InterruptedException {
