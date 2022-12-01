@@ -2,10 +2,11 @@ package gay.bacoin.api.objects;
 
 public class Answer {
 
-    private long code;
-    private String answer;
+    private final int code;
+    private final String answer;
 
-    public Answer(String code, String answer){
+    public Answer(int code, String answer){
+        this.code = code;
         this.answer = answer;
     }
 
@@ -13,7 +14,7 @@ public class Answer {
         return answer;
     }
 
-    public long getCode() {
+    public int getCode() {
         return code;
     }
 }

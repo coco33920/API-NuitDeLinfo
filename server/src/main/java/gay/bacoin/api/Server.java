@@ -4,10 +4,7 @@ import com.github.javafaker.Faker;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import gay.bacoin.api.objects.Answer;
-import gay.bacoin.api.objects.Disease;
-import gay.bacoin.api.objects.DiseasesDeserializer;
-import gay.bacoin.api.objects.Payload;
+import gay.bacoin.api.objects.*;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
@@ -28,10 +25,8 @@ public class Server {
     private static final Type listOfDiseasesType = new TypeToken<ArrayList<Disease>>() {
     }.getType();
     private static ArrayList<Disease> allDiseases = new ArrayList<>();
-    private static HashMap<Long, Disease> diseasesMap = new HashMap<>();
-    private static ArrayList<String> allDiseasesName = new ArrayList<>();
-    private static ArrayList<String> falseDiseases = new ArrayList<>();
-
+    private static final HashMap<String, Disease> diseasesMap = new HashMap<>();
+    private static final ArrayList<String> allDiseasesName = new ArrayList<>();
     private static String LOREM_IPSUM = "\n" +
         "\n" +
         "Aenean rutrum pellentesque hendrerit. Nam elementum augue sapien. Etiam tempus enim a leo porttitor, vel ultricies nibh auctor. Donec lobortis lorem ut enim porta, et fermentum ex pretium. Morbi at viverra metus. Donec enim nulla, laoreet ac iaculis gravida, dapibus tempor justo. Maecenas et condimentum urna. Donec vehicula justo non nibh auctor, vitae varius leo efficitur. Duis eleifend massa sed nisi viverra tristique. Etiam sed erat tortor. Praesent eu volutpat libero, sit amet consequat ligula. Interdum et malesuada fames ac ante ipsum primis in faucibus. Sed commodo id quam elementum viverra. Aenean ut orci eu velit fermentum dignissim. Mauris pharetra, odio aliquet condimentum pretium, lorem urna semper urna, ac ultrices massa nulla et mi.\n" +
@@ -68,11 +63,7 @@ public class Server {
                 return s;
             }).map(s -> s.substring(0, 1).toUpperCase() + s.substring(1))).forEach(el -> words.addAll(el.collect(Collectors.toList())));
         latinWords = words;
-        System.out.println("Generating false information");
-        System.out.println("Printing false information");
-        System.out.println(generateFalseInformation());
-        System.out.println(generateFalseInformation());
-        System.out.println(falseDiseases);
+        System.out.println("All ready to go!");
     }
 
     private static void getAllDiseases() throws IOException, InterruptedException {
@@ -88,15 +79,78 @@ public class Server {
         allDiseases = allDiseases.stream()
             .filter(disease -> !disease.getDefinition().equalsIgnoreCase("None available")).collect(Collectors.toCollection(ArrayList::new));
         allDiseases.forEach(
-            disease -> diseasesMap.put(disease.getOrphaCode(), disease)
+            disease -> diseasesMap.put(disease.getPreferredTerm(), disease)
         );
         allDiseases.forEach(el -> allDiseasesName.add(el.getPreferredTerm()));
     }
 
-    private static String generateFalseInformation() {
-
+    private static String generateFalseInformation(Disease d) {
         int i = new Random().nextInt(100);
+        String name = d.getPreferredTerm();
+        if(name.split(" ").length > 3){
+            String[] s = name.split(" ");
+            String first = "";
+            String last = "";
 
+            if(i <= 20){
+                Faker f = new Faker(Locale.US);
+                Random r = new Random();
+                int randomLatinWordIndex = r.nextInt(latinWords.size());
+                first = latinWords.get(randomLatinWordIndex);
+                last = f.name().lastName();
+                s[0] = first;
+                s[s.length - 1] = last;
+                return String.join(" ",s);
+            }
+
+            if (i <= 33) {
+                Faker f = new Faker(Locale.GERMANY);
+                first = "Pathologie";
+                last = "de " + f.name().lastName();
+                s[0] = first;
+                s[s.length - 1] = last;
+                return String.join(" ",s);
+            }
+
+            if (i <= 58) {
+                Faker f = new Faker(Locale.US);
+                first = "Maladie";
+                last = "de " + f.name().lastName();
+                s[0] = first;
+                s[s.length - 1] = last;
+                return String.join(" ",s);
+            }
+
+            if (i <= 78) {
+                Faker f = new Faker(Locale.UK);
+                first = "Syndrome";
+                last = "de " + f.name().lastName();
+                s[0] = first;
+                s[s.length - 1] = last;
+                return String.join(" ",s);
+            }
+
+            if (i <= 93) {
+                Random r = new Random();
+                int randomLatinWordIndex = r.nextInt(latinWords.size());
+                String randomLatinWord = latinWords.get(randomLatinWordIndex);
+                first = "Syndrome";
+                last = "de " + randomLatinWord;
+                s[0] = first;
+                s[s.length - 1] = last;
+                return String.join(" ",s);
+            }
+
+            Faker f = new Faker(Locale.US);
+            Random r = new Random();
+            int randomLatinWordIndex = r.nextInt(latinWords.size());
+            first = latinWords.get(randomLatinWordIndex);
+            last = "sur" + f.animal().name();
+
+            s[0] = first;
+            s[s.length - 1] = last;
+            return String.join(" ",s);
+        }
         if (i <= 20) {
             Faker f = new Faker(Locale.US);
             Random r = new Random();
@@ -142,13 +196,24 @@ public class Server {
         return newRandomLatinWord + "-virus";
     }
 
+    private static Disease getRandomDisease(){
+        Random r = new Random();
+        int randomIndex = r.nextInt(allDiseases.size());
+        return allDiseases.get(randomIndex);
+    }
+
     private static void setupRoute() {
         get("/", (request, response) -> {
             response.type("application/json");
             return "{\"text\":\"Hello World\"}";
         });
         get("/new_game", ((request, response) -> {
-            return "Hello world";
+            Disease d = getRandomDisease();
+            response.type("application/json");
+            String first = generateFalseInformation(d);
+            String second = generateFalseInformation(d);
+            Game g = new Game(d,first,second);
+            return new Gson().toJson(g);
         }));
         post("/verify", ((request, response) -> {
             String body = request.body(); //body : answer: String
@@ -159,10 +224,11 @@ public class Server {
                 e.printStackTrace();
             }
 
-            boolean exist = !(a == null) && diseasesMap.containsKey(a.getCode());
+            boolean exist = !(a == null) && diseasesMap.containsKey(a.getAnswer());
             Payload p = new Payload(exist);
-            if (exist && diseasesMap.containsKey(a.getCode())) {
-                Disease disease = diseasesMap.get(a.getCode());
+            if (exist && diseasesMap.containsKey(a.getAnswer())) {
+                Game.deleteGame(a.getCode());
+                Disease disease = diseasesMap.get(a.getAnswer());
                 p.setDescription(disease.getDefinition());
                 p.setName(disease.getPreferredTerm());
                 p.setCode(disease.getOrphaCode());
