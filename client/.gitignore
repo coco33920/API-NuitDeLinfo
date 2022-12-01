@@ -1,0 +1,9 @@
+# Logs
+logs
+*.log
+
+# Js deps
+node_modules
+
+# Build
+dist
