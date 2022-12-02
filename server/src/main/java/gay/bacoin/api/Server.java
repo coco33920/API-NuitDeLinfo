@@ -28,7 +28,7 @@ import static spark.Spark.*;
 public class Server {
 
     public static void main(String[] args) {
-        ipAddress("127.0.0.1");
+        ipAddress("0.0.0.0");
         port(8080);
         setupRoute();
         System.out.println("Downloading diseases from the official governmental API");
