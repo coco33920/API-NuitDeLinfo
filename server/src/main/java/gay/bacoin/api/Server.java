@@ -72,54 +72,15 @@ public class Server {
             response.type("application/json");
             return "{\"text\":\"Hello World\"}";
         });
-        get("/new_game", ((request, response) -> {
-            Disease d = GovernmentalApiHandler.getInstance().getRandomDisease();
-            response.type("application/json");
-            FalseInformation f = new FalseInformation(d);
-            String first = f.generateFalseInformation();
-            String second = f.generateFalseInformation();
-            Game g = new Game(d, first, second);
-            return new Gson().toJson(g);
-        }));
+        get("/new_game", ((request, response) ->
+            GovernmentalApiHandler.getInstance().newGame()));
         post("/verify", ((request, response) -> {
             String body = request.body(); //body : answer: String
-            Answer a = null;
-            try {
-                a = new Gson().fromJson(body, Answer.class);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            boolean exist = !(a == null) && GovernmentalApiHandler.getInstance().getDiseasesMap().containsKey(a.getAnswer());
-            Payload p = new Payload(exist);
-            if (exist && GovernmentalApiHandler.getInstance().getDiseasesMap().containsKey(a.getAnswer())) {
-                Game.deleteGame(a.getCode());
-                Disease disease = GovernmentalApiHandler.getInstance().getDiseasesMap().get(a.getAnswer());
-                WikipediaHandler handler = new WikipediaHandler(disease.getPreferredTerm());
-                p.setDescription(disease.getDefinition());
-                p.setName(disease.getPreferredTerm());
-                p.setCode(disease.getOrphaCode());
-                p.setLink("https://wikipedia.org");
-                p.setDiscoverer("A scientist, I guess");
-                p.setDate("A date, I guess");
-            }
-            response.type("application/json");
-            return new Gson().toJson(p);
+            return GovernmentalApiHandler.getInstance().verify(body);
         }));
         post("/score", (request, response) -> {
             String body = request.body();
-            Score s = null;
-            try {
-                s = new Gson().fromJson(body, Score.class);
-                if (s.getUsername() == null) {
-                    return "{\"success\":false}";
-                }
-                DatabaseHandler.getInstance().addScoreInDatabase(s);
-                response.type("application/json");
-                return "{\"success\":true}";
-            } catch (Exception e) {
-                return "{\"success\":false}";
-            }
+            return DatabaseHandler.getInstance().addScoreIntoDatabase(body);
         });
         get("/leaderboard", (request, response) -> {
             ArrayList<Score> s = DatabaseHandler.getInstance().getLeaderBoard();

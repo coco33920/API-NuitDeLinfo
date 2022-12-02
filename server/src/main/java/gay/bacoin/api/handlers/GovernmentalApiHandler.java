@@ -1,9 +1,14 @@
 package gay.bacoin.api.handlers;
 
+import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import gay.bacoin.api.FalseInformation;
 import gay.bacoin.api.diseases.Disease;
 import gay.bacoin.api.diseases.DiseasesDeserializer;
+import gay.bacoin.api.gsonpayloads.Answer;
+import gay.bacoin.api.gsonpayloads.Game;
+import gay.bacoin.api.gsonpayloads.Payload;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -52,14 +57,42 @@ public class GovernmentalApiHandler {
         );
     }
 
+    public String verify(String body){
+        Answer a = null;
+        try {
+            a = new Gson().fromJson(body, Answer.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        boolean exist = !(a == null) && diseasesMap.containsKey(a.getAnswer());
+        Payload p = new Payload(exist);
+        if (exist && diseasesMap.containsKey(a.getAnswer())) {
+            Game.deleteGame(a.getCode());
+            Disease disease = diseasesMap.get(a.getAnswer());
+            p.setDescription(disease.getDefinition());
+            p.setName(disease.getPreferredTerm());
+            p.setCode(disease.getOrphaCode());
+            p.setLink("https://wikipedia.org");
+            p.setDiscoverer("A scientist, I guess");
+            p.setDate("A date, I guess");
+        }
+        return new Gson().toJson(p);
+    }
+
+    public String newGame(){
+        Disease d = getRandomDisease();
+        FalseInformation f = new FalseInformation(d);
+        String first = f.generateFalseInformation();
+        String second = f.generateFalseInformation();
+        Game g = new Game(d, first, second);
+        return new Gson().toJson(g);
+    }
+
     public Disease getRandomDisease() {
         Random r = new Random();
         int randomIndex = r.nextInt(allDiseases.size());
         return allDiseases.get(randomIndex);
-    }
-
-    public HashMap<String, Disease> getDiseasesMap() {
-        return diseasesMap;
     }
 
     public static GovernmentalApiHandler getInstance() {

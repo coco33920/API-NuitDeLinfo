@@ -1,5 +1,6 @@
 package gay.bacoin.api.handlers;
 
+import com.google.gson.Gson;
 import gay.bacoin.api.database.DatabaseLite;
 import gay.bacoin.api.gsonpayloads.Score;
 
@@ -45,9 +46,23 @@ public class DatabaseHandler {
         databaseLite.update(sql);
     }
 
-    public void addScoreInDatabase(Score s) {
+    private void addScoreInDatabase(Score s) {
         String u = String.format("insert into leaderboard(pseudo,score) VALUES(\"%s\",%d)", s.getUsername(), s.getScore());
         databaseLite.update(u);
+    }
+
+    public String addScoreIntoDatabase(String score){
+        Score s;
+        try {
+            s = new Gson().fromJson(score, Score.class);
+            if (s.getUsername() == null) {
+                return "{\"success\":false}";
+            }
+            addScoreInDatabase(s);
+            return "{\"success\":true}";
+        } catch (Exception e) {
+            return "{\"success\":false}";
+        }
     }
 
     public ArrayList<Score> getLeaderBoard() {
