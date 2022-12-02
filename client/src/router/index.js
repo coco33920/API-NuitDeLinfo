@@ -14,6 +14,11 @@ const router = createRouter({
             name: "leaderboard",
             component: () => import("@/views/LeaderboardView.vue"),
         },
+        {
+            path: "/minigame",
+            name: "minigame",
+            component: () => import("@/views/MiniGameView.vue"),
+        },
     ],
 });
 

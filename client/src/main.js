@@ -12,7 +12,8 @@ const app = createApp(App);
 
 app.use(KonamiCode, {
     onKonamiCodeEntered: function () {
-        alert("Konami Code successfully entered!");
+        console.log("Konami code entered!");
+        router.push("/minigame");
     },
 });
 
