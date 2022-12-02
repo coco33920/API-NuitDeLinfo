@@ -7,6 +7,7 @@ import gay.bacoin.api.gsonpayloads.*;
 import gay.bacoin.api.diseases.Disease;
 import gay.bacoin.api.diseases.DiseasesDeserializer;
 import gay.bacoin.api.handlers.DatabaseHandler;
+import gay.bacoin.api.handlers.GovernmentalApiHandler;
 import gay.bacoin.api.handlers.LatinWordHandler;
 import gay.bacoin.api.handlers.WikipediaHandler;
 import gay.bacoin.api.vih.Fact;
@@ -26,11 +27,6 @@ import static spark.Spark.*;
 
 public class Server {
 
-    private static final HttpClient client = HttpClient.newHttpClient();
-    private static final Type listOfDiseasesType = new TypeToken<ArrayList<Disease>>() {
-    }.getType();
-    private static ArrayList<Disease> allDiseases = new ArrayList<>();
-    private static final HashMap<String, Disease> diseasesMap = new HashMap<>();
     //TODO: session client
 
 
@@ -39,35 +35,12 @@ public class Server {
         port(8080);
         setupRoute();
         System.out.println("Downloading diseases from the official governmental API");
-        getAllDiseases();
+        GovernmentalApiHandler.getInstance();
         System.out.println("Generating random latin words");
         LatinWordHandler.getInstance();
         System.out.println("All ready to go!");
         DatabaseHandler.getInstance();
         System.out.println("Database ready :)");
-    }
-
-    private static void getAllDiseases() throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create("https://api.orphacode.org/FR/ClinicalEntity"))
-            .header("accept", "application/json")
-            .header("apiKey", "coco33920")
-            .GET()
-            .build();
-        GsonBuilder gson = new GsonBuilder().registerTypeAdapter(Disease.class, new DiseasesDeserializer());
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        allDiseases = gson.create().fromJson(response.body(), listOfDiseasesType);
-        allDiseases = allDiseases.stream()
-            .filter(disease -> !disease.getDefinition().equalsIgnoreCase("None available")).collect(Collectors.toCollection(ArrayList::new));
-        allDiseases.forEach(
-            disease -> diseasesMap.put(disease.getPreferredTerm(), disease)
-        );
-    }
-
-    private static Disease getRandomDisease() {
-        Random r = new Random();
-        int randomIndex = r.nextInt(allDiseases.size());
-        return allDiseases.get(randomIndex);
     }
 
     private static void setupRoute() {
@@ -100,7 +73,7 @@ public class Server {
             return "{\"text\":\"Hello World\"}";
         });
         get("/new_game", ((request, response) -> {
-            Disease d = getRandomDisease();
+            Disease d = GovernmentalApiHandler.getInstance().getRandomDisease();
             response.type("application/json");
             FalseInformation f = new FalseInformation(d);
             String first = f.generateFalseInformation();
@@ -117,11 +90,11 @@ public class Server {
                 e.printStackTrace();
             }
 
-            boolean exist = !(a == null) && diseasesMap.containsKey(a.getAnswer());
+            boolean exist = !(a == null) && GovernmentalApiHandler.getInstance().getDiseasesMap().containsKey(a.getAnswer());
             Payload p = new Payload(exist);
-            if (exist && diseasesMap.containsKey(a.getAnswer())) {
+            if (exist && GovernmentalApiHandler.getInstance().getDiseasesMap().containsKey(a.getAnswer())) {
                 Game.deleteGame(a.getCode());
-                Disease disease = diseasesMap.get(a.getAnswer());
+                Disease disease = GovernmentalApiHandler.getInstance().getDiseasesMap().get(a.getAnswer());
                 WikipediaHandler handler = new WikipediaHandler(disease.getPreferredTerm());
                 p.setDescription(disease.getDefinition());
                 p.setName(disease.getPreferredTerm());
