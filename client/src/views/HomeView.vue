@@ -13,6 +13,7 @@ export default defineComponent({
             card_info: null,
             card_info_title: null,
             card_info_description: null,
+            card_wiki_link: null,
         };
     },
     // add on mounted
@@ -95,11 +96,17 @@ export default defineComponent({
         <div id="info_card" class="card">
             <p>{{ card_info_title }}</p>
             <p>{{ card_info_description }}</p>
-            <button
-                @click="this.card_info.classList.remove('show') || this.setup()"
-            >
-                Continuer le jeu
-            </button>
+
+            <div id="ic_bottom">
+                <button
+                    @click="
+                        this.card_info.classList.remove('show') || this.setup()
+                    "
+                >
+                    Continuer le jeu
+                </button>
+                <a target="_blank" :href="'http://localhost:8080/wiki/' + this.card_info_title">see more</a>
+            </div>
         </div>
 
         <div id="card" class="card">
@@ -214,6 +221,7 @@ p {
 }
 
 button {
+    font-size: 14px;
     font-family: "Inter", sans-serif;
     font-weight: 500;
     background: #a4241f;
@@ -264,6 +272,27 @@ svg#foo {
         span {
             font-weight: bold;
         }
+    }
+}
+
+#ic_bottom {
+    display: flex;
+    align-items: center;
+    padding-bottom: 0;
+    gap: 1em;
+
+    & > a {
+        font-size: 14px;
+        font-weight: normal;
+        font-family: "Inter", sans-serif;
+        background: #a4241f;
+        border-radius: 16px;
+        border: none;
+        color: white;
+        padding: 1em;
+        text-align: left;
+        text-decoration: none;
+        transition: 0.2s ease-in-out;
     }
 }
 </style>
