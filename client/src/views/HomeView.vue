@@ -10,11 +10,15 @@ export default defineComponent({
             game_id: undefined,
             entries: [],
             card: null,
+            card_info: null,
+            card_info_title: null,
+            card_info_description: null,
         };
     },
     // add on mounted
     mounted() {
         this.card = document.getElementById("card");
+        this.card_info = document.getElementById("info_card");
 
         console.log("setup");
         this.setup();
@@ -39,6 +43,9 @@ export default defineComponent({
 
                 console.log(this.entries);
                 console.log(`==> ${r.trueName.preferredTerm}`);
+
+                this.card_info_title = r.trueName.preferredTerm;
+                this.card_info_description = r.trueName.definition;
             });
         },
 
@@ -69,12 +76,7 @@ export default defineComponent({
                         this.setup();
                     } else {
                         this.score++;
-                        this.setup();
-                        this.card.classList.add("flip");
-                        setTimeout(
-                            () => this.card.classList.remove("flip"),
-                            1000
-                        );
+                        this.card_info.classList.add("show");
                     }
                 });
         },
@@ -88,6 +90,16 @@ export default defineComponent({
             <h2>
                 <span>Score:</span><span>{{ score }}</span>
             </h2>
+        </div>
+
+        <div id="info_card" class="card">
+            <p>{{ card_info_title }}</p>
+            <p>{{ card_info_description }}</p>
+            <button
+                @click="this.card_info.classList.remove('show') || this.setup()"
+            >
+                Continuer le jeu
+            </button>
         </div>
 
         <div id="card" class="card">
@@ -130,6 +142,34 @@ main {
     place-content: center;
     min-height: 100vh;
     font-size: 2em;
+}
+
+#info_card {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 99999999;
+    outline: 4px solid #a4241f;
+    transition: 1s ease-in-out;
+
+    &::before {
+        content: "";
+        position: absolute;
+        inset: -1000%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: -1;
+    }
+
+    p:nth-child(2) {
+        font-size: 0.7em;
+        font-weight: normal;
+    }
+}
+
+#info_card.show {
+    display: block;
 }
 
 .card {
