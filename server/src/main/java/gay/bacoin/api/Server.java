@@ -27,9 +27,6 @@ import static spark.Spark.*;
 
 public class Server {
 
-    //TODO: session client
-
-
     public static void main(String[] args) {
         ipAddress("127.0.0.1");
         port(8080);

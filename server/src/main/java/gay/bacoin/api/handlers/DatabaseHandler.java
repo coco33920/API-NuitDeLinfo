@@ -13,13 +13,19 @@ import java.util.ArrayList;
 public class DatabaseHandler {
 
     private static DatabaseHandler instance;
-    private DatabaseLite databaseLite;
+    private final DatabaseLite databaseLite;
 
-    public DatabaseHandler(){
+    public DatabaseHandler() {
         instance = this;
         File homeDb = getHomeDatabaseFile();
         this.databaseLite = new DatabaseLite(homeDb.getAbsolutePath());
         setupDatabase();
+    }
+
+    public static DatabaseHandler getInstance() {
+        if (instance == null)
+            new DatabaseHandler();
+        return instance;
     }
 
     private File getHomeDatabaseFile() {
@@ -51,7 +57,7 @@ public class DatabaseHandler {
         databaseLite.update(u);
     }
 
-    public String addScoreIntoDatabase(String score){
+    public String addScoreIntoDatabase(String score) {
         Score s;
         try {
             s = new Gson().fromJson(score, Score.class);
@@ -79,12 +85,6 @@ public class DatabaseHandler {
             }
         }
         return s;
-    }
-
-    public static DatabaseHandler getInstance() {
-        if(instance == null)
-            new DatabaseHandler();
-        return instance;
     }
 
 

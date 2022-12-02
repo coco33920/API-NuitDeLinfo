@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class DatabaseLite {
 
-    private Connection connection;
+    private final Connection connection;
 
 
     /**

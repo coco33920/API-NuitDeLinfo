@@ -11,12 +11,12 @@ public class FalseInformation {
 
     private final Disease disease;
 
-    public FalseInformation(Disease disease){
+    public FalseInformation(Disease disease) {
         this.disease = disease;
     }
 
 
-    private String generateFalseInformationIfSizeIsSuperior(int i, String name){
+    private String generateFalseInformationIfSizeIsSuperior(int i, String name) {
         String[] s = name.split(" ");
         String first = "";
         String last = "";
@@ -74,7 +74,7 @@ public class FalseInformation {
         return String.join(" ", s);
     }
 
-    private String generateFalseInformationIfSizeIsInferior(int i){
+    private String generateFalseInformationIfSizeIsInferior(int i) {
         if (i <= 20) {
             Faker f = new Faker(Locale.US);
             return LatinWordHandler.getInstance().getRandomLatinWord() + " de " + f.name().lastName();
@@ -115,7 +115,7 @@ public class FalseInformation {
         int i = new Random().nextInt(100);
         String name = disease.getPreferredTerm();
         if (name.split(" ").length > 3) {
-            return generateFalseInformationIfSizeIsSuperior(i,name);
+            return generateFalseInformationIfSizeIsSuperior(i, name);
         }
         return generateFalseInformationIfSizeIsInferior(i);
     }

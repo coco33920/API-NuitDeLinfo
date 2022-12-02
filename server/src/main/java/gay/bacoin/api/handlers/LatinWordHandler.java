@@ -1,6 +1,5 @@
 package gay.bacoin.api.handlers;
 
-import gay.bacoin.api.Server;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -12,12 +11,19 @@ public class LatinWordHandler {
 
     private static LatinWordHandler instance;
     private final ArrayList<String> latinWords = new ArrayList<>();
-    public LatinWordHandler(){
+
+    public LatinWordHandler() {
         instance = this;
         generateLatinWords();
     }
 
-    private void generateLatinWords(){
+    public static LatinWordHandler getInstance() {
+        if (instance == null)
+            new LatinWordHandler();
+        return instance;
+    }
+
+    private void generateLatinWords() {
         String LOREM_IPSUM = "\n" +
             "\n" +
             "Aenean rutrum pellentesque hendrerit. Nam elementum augue sapien. Etiam tempus enim a leo porttitor, vel ultricies nibh auctor. Donec lobortis lorem ut enim porta, et fermentum ex pretium. Morbi at viverra metus. Donec enim nulla, laoreet ac iaculis gravida, dapibus tempor justo. Maecenas et condimentum urna. Donec vehicula justo non nibh auctor, vitae varius leo efficitur. Duis eleifend massa sed nisi viverra tristique. Etiam sed erat tortor. Praesent eu volutpat libero, sit amet consequat ligula. Interdum et malesuada fames ac ante ipsum primis in faucibus. Sed commodo id quam elementum viverra. Aenean ut orci eu velit fermentum dignissim. Mauris pharetra, odio aliquet condimentum pretium, lorem urna semper urna, ac ultrices massa nulla et mi.\n" +
@@ -46,15 +52,9 @@ public class LatinWordHandler {
         return latinWords;
     }
 
-    public String getRandomLatinWord(){
+    public String getRandomLatinWord() {
         Random r = new Random();
         int randomLatinWordIndex = r.nextInt(latinWords.size());
         return latinWords.get(randomLatinWordIndex);
-    }
-
-    public static LatinWordHandler getInstance() {
-        if(instance == null)
-            new LatinWordHandler();
-        return instance;
     }
 }

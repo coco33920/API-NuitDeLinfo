@@ -8,9 +8,9 @@ public class Payload {
     private String link;
     private String name;
     private long code;
-    private boolean exist;
+    private final boolean exist;
 
-    public Payload(String description, String date, String discoverer, String link,boolean exist,long code,String name) {
+    public Payload(String description, String date, String discoverer, String link, boolean exist, long code, String name) {
         this.description = description;
         this.date = date;
         this.discoverer = discoverer;
@@ -20,7 +20,7 @@ public class Payload {
         this.name = name;
     }
 
-    public Payload(boolean exist){
+    public Payload(boolean exist) {
         this.exist = exist;
     }
 
@@ -28,16 +28,32 @@ public class Payload {
         return description;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public String getDate() {
         return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public String getDiscoverer() {
         return discoverer;
     }
 
+    public void setDiscoverer(String discoverer) {
+        this.discoverer = discoverer;
+    }
+
     public String getLink() {
         return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
     }
 
     public boolean isExist() {
@@ -48,28 +64,12 @@ public class Payload {
         return code;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    public void setDiscoverer(String discoverer) {
-        this.discoverer = discoverer;
-    }
-
-    public void setLink(String link) {
-        this.link = link;
-    }
-
     public void setCode(long code) {
         this.code = code;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public void setName(String name) {

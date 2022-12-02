@@ -27,8 +27,8 @@ public class GovernmentalApiHandler {
     private final HttpClient client = HttpClient.newHttpClient();
     private final Type listOfDiseasesType = new TypeToken<ArrayList<Disease>>() {
     }.getType();
-    private ArrayList<Disease> allDiseases = new ArrayList<>();
     private final HashMap<String, Disease> diseasesMap = new HashMap<>();
+    private ArrayList<Disease> allDiseases = new ArrayList<>();
 
 
     public GovernmentalApiHandler() {
@@ -38,6 +38,12 @@ public class GovernmentalApiHandler {
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static GovernmentalApiHandler getInstance() {
+        if (instance == null)
+            new GovernmentalApiHandler();
+        return instance;
     }
 
     private void getAllDiseases() throws IOException, InterruptedException {
@@ -57,7 +63,7 @@ public class GovernmentalApiHandler {
         );
     }
 
-    public String verify(String body){
+    public String verify(String body) {
         Answer a = null;
         try {
             a = new Gson().fromJson(body, Answer.class);
@@ -80,7 +86,7 @@ public class GovernmentalApiHandler {
         return new Gson().toJson(p);
     }
 
-    public String newGame(){
+    public String newGame() {
         Disease d = getRandomDisease();
         FalseInformation f = new FalseInformation(d);
         String first = f.generateFalseInformation();
@@ -93,11 +99,5 @@ public class GovernmentalApiHandler {
         Random r = new Random();
         int randomIndex = r.nextInt(allDiseases.size());
         return allDiseases.get(randomIndex);
-    }
-
-    public static GovernmentalApiHandler getInstance() {
-        if (instance == null)
-            new GovernmentalApiHandler();
-        return instance;
     }
 }
