@@ -77,17 +77,7 @@ public class Server {
 
     private static void addScoreInDatabase(Score s) {
         String sql = "select * from leaderboard where pseudo=\"" + s.getUsername() + "\"";
-        String u = "";
-        ResultSet rs = databaseLite.getResult(sql);
-        try {
-            if (!rs.next()) {
-                u = String.format("insert into leaderboard(pseudo,score) VALUES(\"%s\",%d)", s.getUsername(), s.getScore());
-            } else {
-                u = String.format("update leaderboard set score=%d where pseudo=\"%s\"", s.getScore(), s.getUsername());
-            }
-        } catch (SQLException e) {
-            u = String.format("insert into leaderboard(pseudo,score) VALUES(\"%s\",%d)", s.getUsername(), s.getScore());
-        }
+        String u = String.format("insert into leaderboard(pseudo,score) VALUES(\"%s\",%d)", s.getUsername(), s.getScore());
         databaseLite.update(u);
     }
 
