@@ -21,7 +21,7 @@ export default defineComponent({
         set_question() {
             this.card_info.classList.remove("show");
 
-            axios.get("http://localhost:8080/request").then((response) => {
+            axios.get("https://api.nwa2coco.fr/request").then((response) => {
                 let r = response.data;
 
                 this.fact = r.fact;

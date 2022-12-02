@@ -29,7 +29,7 @@ export default defineComponent({
             console.log(index, checked);
         },
         setup() {
-            axios.get("http://localhost:8080/new_game").then((response) => {
+            axios.get("https://api.nwa2coco.fr/new_game").then((response) => {
                 let r = response.data;
                 console.log(r);
 
@@ -52,7 +52,7 @@ export default defineComponent({
 
         validate(message) {
             axios
-                .post("http://localhost:8080/verify", {
+                .post("https://api.nwa2coco.fr/verify", {
                     code: this.game_id,
                     answer: message,
                 })
@@ -66,7 +66,7 @@ export default defineComponent({
                             this.card.classList.remove("sink"), 2000;
                         });
                         axios
-                            .post("http://localhost:8080/score", {
+                            .post("https://api.nwa2coco.fr/score", {
                                 username: name,
                                 score: this.score,
                             })
@@ -111,7 +111,7 @@ export default defineComponent({
                 </button>
                 <a
                     target="_blank"
-                    :href="'http://localhost:8080/wiki/' + this.card_info_title"
+                    :href="'https://api.nwa2coco.fr/wiki/' + this.card_info_title"
                     >see more</a
                 >
             </div>
