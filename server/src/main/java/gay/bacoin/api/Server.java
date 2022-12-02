@@ -287,7 +287,7 @@ public class Server {
         });
 
         before((request, response) -> {
-            response.header("Access-Control-Allow-Origin", "localhost");
+            response.header("Access-Control-Allow-Origin", "*");
             response.header("Access-Control-Request-Method", "GET, POST, PUT, DELETE, OPTIONS");
             response.header("Access-Control-Allow-Headers", "Content-Type, Authorization, Content-Length, X-Requested-With");
             // Note: this may or may not be necessary in your particular application
