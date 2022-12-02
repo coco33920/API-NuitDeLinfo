@@ -17,7 +17,7 @@ The client is written in JavaScript using [Vue.js](https://vuejs.org/).
 
 ## :arrow_up: Dependencies
 
-- [Java 8](https://www.oracle.com/java/technologies/javase/javase-jdk8-downloads.html)
+- [Java 11](https://www.oracle.com/java/technologies/javase/javase-jdk8-downloads.html)
 - [Maven 4.0.0](https://maven.apache.org/download.cgi)
 - [npm](https://www.npmjs.com/get-npm)
 
