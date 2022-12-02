@@ -320,10 +320,11 @@ public class Server {
             if (exist && diseasesMap.containsKey(a.getAnswer())) {
                 Game.deleteGame(a.getCode());
                 Disease disease = diseasesMap.get(a.getAnswer());
+                WikipediaHandler handler = new WikipediaHandler(disease.getPreferredTerm());
                 p.setDescription(disease.getDefinition());
                 p.setName(disease.getPreferredTerm());
                 p.setCode(disease.getOrphaCode());
-                p.setLink("https://wikipedia.org");
+                p.setLink(handler.getWikipediaURL());
                 p.setDiscoverer("A scientist, I guess");
                 p.setDate("A date, I guess");
             }
@@ -350,5 +351,15 @@ public class Server {
             response.type("application/json");
             return new Gson().toJson(s);
         });
+        get("/wiki/:name", (request, response) -> {
+            WikipediaHandler wikipediaHandler = new WikipediaHandler(request.params(":name"));
+            String url = wikipediaHandler.getWikipediaURL();
+            return "{\"url\":\""+url+"\"}";
+        });
     }
+
+    public static String capitalizeString(String s){
+        return s.substring(0,1).toUpperCase() + s.substring(1);
+    }
+
 }
