@@ -1,11 +1,13 @@
 <script>
 import axios from "axios";
 import { defineComponent } from "vue";
+import router from "@/router";
 
 export default defineComponent({
     components: {},
     data: function () {
         return {
+            score: 0,
             game_id: undefined,
             entries: [],
         };
@@ -13,21 +15,58 @@ export default defineComponent({
     // add on mounted
     mounted() {
         console.log("setup");
-        axios.get("http://localhost:8080/new_game").then((response) => {
-            let r = response.data;
-            console.log(r);
-
-            this.game_id = r.gameId;
-            this.entries = [r.trueName.preferredTerm, r.falseNameOne, r.falseNameTwo];
-            // shuffle entries
-            this.entries.sort(() => Math.random() - 0.5);
-
-            console.log(this.entries);
-        });
+        this.setup();
     },
     methods: {
         check(index, checked) {
             console.log(index, checked);
+        },
+        setup() {
+            axios.get("http://localhost:8080/new_game").then((response) => {
+                let r = response.data;
+                console.log(r);
+
+                this.game_id = r.gameId;
+                this.entries = [
+                    r.trueName.preferredTerm,
+                    r.falseNameOne,
+                    r.falseNameTwo,
+                ];
+                // shuffle entries
+                this.entries.sort(() => Math.random() - 0.5);
+
+                console.log(this.entries);
+                console.log(`==> ${r.trueName.preferredTerm}`);
+            });
+        },
+
+        validate(message) {
+            axios
+                .post("http://localhost:8080/verify", {
+                    code: this.game_id,
+                    answer: message,
+                })
+                .then((response) => {
+                    if (!response.data.exist) {
+                        let name = prompt(
+                            "Vous avez perdu.\nEntrez votre nom:"
+                        );
+
+                        axios
+                            .post("http://localhost:8080/score", {
+                                username: name,
+                                score: this.score,
+                            })
+                            .then((response) => {
+                                console.log(response);
+                                this.score = 0;
+                            });
+                        this.setup();
+                    } else {
+                        this.score++;
+                        this.setup();
+                    }
+                });
         },
     },
 });
@@ -36,7 +75,9 @@ export default defineComponent({
 <template>
     <main>
         <div class="score">
-            <h2><span>Score:</span><span>5</span></h2>
+            <h2>
+                <span>Score:</span><span>{{ score }}</span>
+            </h2>
         </div>
 
         <div class="card">
