@@ -43,15 +43,6 @@ public class Disease {
         return date;
     }
 
-    public void setWikipediaLink(){
-        WikipediaHandler wh = new WikipediaHandler(this.preferredTerm);
-        try {
-            this.wikipediaLink = wh.getWikipediaURL();
-        } catch (IOException e) {
-            this.wikipediaLink = "https://wikipedia.org/";
-        }
-    }
-
     public String getWikipediaLink() {
         return wikipediaLink;
     }

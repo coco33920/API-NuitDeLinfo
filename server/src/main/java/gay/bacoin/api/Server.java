@@ -300,7 +300,6 @@ public class Server {
         });
         get("/new_game", ((request, response) -> {
             Disease d = getRandomDisease();
-            d.setWikipediaLink();
             response.type("application/json");
             String first = generateFalseInformation(d);
             String second = generateFalseInformation(d);

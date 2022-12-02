@@ -20,7 +20,6 @@ public class DiseasesDeserializer implements JsonDeserializer<Disease> {
 
         }
         String date = object.get("Date").getAsString();
-        return new Disease(status, preferredTerm, orpha, def, date, "");
-
+        return new Disease(status, preferredTerm, orpha, def, date, "https://wikipedia.org");
     }
 }
