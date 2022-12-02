@@ -1,7 +1,6 @@
 <script>
 import axios from "axios";
 import { defineComponent } from "vue";
-import router from "@/router";
 
 export default defineComponent({
     components: {},
@@ -10,10 +9,13 @@ export default defineComponent({
             score: 0,
             game_id: undefined,
             entries: [],
+            card: null,
         };
     },
     // add on mounted
     mounted() {
+        this.card = document.getElementById("card");
+
         console.log("setup");
         this.setup();
     },
@@ -51,7 +53,10 @@ export default defineComponent({
                         let name = prompt(
                             "Vous avez perdu.\nEntrez votre nom:"
                         );
-
+                        this.card.classList.add("sink");
+                        setTimeout(() => {
+                            this.card.classList.remove("sink"), 2000;
+                        });
                         axios
                             .post("http://localhost:8080/score", {
                                 username: name,
@@ -65,6 +70,11 @@ export default defineComponent({
                     } else {
                         this.score++;
                         this.setup();
+                        this.card.classList.add("flip");
+                        setTimeout(
+                            () => this.card.classList.remove("flip"),
+                            1000
+                        );
                     }
                 });
         },
@@ -80,7 +90,8 @@ export default defineComponent({
             </h2>
         </div>
 
-        <div class="card">
+        <div id="card" class="card">
+            <div class="card_bg"></div>
             <p>Laquelle de ces maladies existe?</p>
             <div id="answer">
                 <button @click="validate(this.entries[0])">
@@ -94,6 +105,7 @@ export default defineComponent({
                 </button>
             </div>
         </div>
+
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
             <path
                 fill="#a4241f"
@@ -127,7 +139,28 @@ main {
     background: #57120f;
     border-radius: 16px;
     box-shadow: #a4241f 0 5px 0 0;
+    transition: none;
 }
+
+.card_bg {
+    position: absolute;
+    inset: 0;
+    background: #57120f;
+    border-radius: 16px;
+    box-shadow: #a4241f 0 5px 0 0;
+}
+
+.flip {
+    transform: rotateY(360deg);
+    transition: 1s ease-in-out;
+}
+
+.sink {
+    opacity: 0;
+    transform: translateY(100vh);
+    transition: 1s ease-in-out;
+}
+
 p {
     font-weight: bold;
     font-family: "Inter", sans-serif;
@@ -152,7 +185,6 @@ button {
     transition: 0.2s ease-in-out;
 
     &:hover {
-        margin-left: 2em;
         color: #fba9a7;
     }
 }
