@@ -23,6 +23,9 @@ export default defineComponent({
 </script>
 <template>
     <main>
+        <div class="btn_container">
+            <RouterLink class="goto_ld" to="/">Acceuil</RouterLink>
+        </div>
         <div class="card">
             <h1>Leaderboard</h1>
             <div class="inside" v-for="score in scores">
@@ -34,6 +37,30 @@ export default defineComponent({
 </template>
 
 <style lang="scss">
+.btn_container {
+    display: flex;
+    gap: 1em;
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 1em;
+}
+
+.goto_ld {
+    font-size: 14px;
+    font-family: "Inter", sans-serif;
+    font-weight: 500;
+    background: #57120f;
+    border-radius: 16px;
+    border: none;
+    color: white;
+    padding: 1em;
+    text-align: left;
+    transition: 0.2s ease-in-out;
+    z-index: 1000;
+    text-decoration: none;
+}
+
 main {
     overflow: hidden;
     display: grid;

@@ -86,7 +86,10 @@ export default defineComponent({
 </script>
 
 <template>
-    <a id="goto_ld" target="_blank" href="/leaderboard">Leaderboard</a>
+    <div class="btn_container">
+        <a class="goto_ld" target="_blank" href="/leaderboard">Leaderboard</a>
+        <a class="goto_ld" target="_blank" href="/leaderboard">Acceuil</a>
+    </div>
     <main>
         <div class="score">
             <h2>
@@ -156,11 +159,16 @@ main {
     font-size: 2em;
 }
 
-#goto_ld {
+.btn_container {
+    display: flex;
+    gap: 1em;
     position: absolute;
     top: 0;
     right: 0;
     margin: 1em;
+}
+
+.goto_ld {
     font-size: 14px;
     font-family: "Inter", sans-serif;
     font-weight: 500;
