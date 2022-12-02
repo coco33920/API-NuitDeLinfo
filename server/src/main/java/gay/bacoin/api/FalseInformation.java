@@ -2,6 +2,7 @@ package gay.bacoin.api;
 
 import com.github.javafaker.Faker;
 import gay.bacoin.api.diseases.Disease;
+import gay.bacoin.api.handlers.LatinWordHandler;
 
 import java.util.Locale;
 import java.util.Random;
@@ -15,12 +16,6 @@ public class FalseInformation {
     }
 
 
-    private String getRandomLatinWord(){
-        Random r = new Random();
-        int randomLatinWordIndex = r.nextInt(Server.getLatinWords().size());
-        return Server.getLatinWords().get(randomLatinWordIndex);
-    }
-
     private String generateFalseInformationIfSizeIsSuperior(int i, String name){
         String[] s = name.split(" ");
         String first = "";
@@ -28,7 +23,7 @@ public class FalseInformation {
 
         if (i <= 20) {
             Faker f = new Faker(Locale.US);
-            first = getRandomLatinWord();
+            first = LatinWordHandler.getInstance().getRandomLatinWord();
             last = f.name().lastName();
             s[0] = first;
             s[s.length - 1] = last;
@@ -64,14 +59,14 @@ public class FalseInformation {
 
         if (i <= 93) {
             first = "Syndrome";
-            last = "de " + getRandomLatinWord();
+            last = "de " + LatinWordHandler.getInstance().getRandomLatinWord();
             s[0] = first;
             s[s.length - 1] = last;
             return String.join(" ", s);
         }
 
         Faker f = new Faker(Locale.US);
-        first = getRandomLatinWord();
+        first = LatinWordHandler.getInstance().getRandomLatinWord();
         last = "sur" + f.animal().name();
 
         s[0] = first;
@@ -82,7 +77,7 @@ public class FalseInformation {
     private String generateFalseInformationIfSizeIsInferior(int i){
         if (i <= 20) {
             Faker f = new Faker(Locale.US);
-            return getRandomLatinWord() + " de " + f.name().lastName();
+            return LatinWordHandler.getInstance().getRandomLatinWord() + " de " + f.name().lastName();
         }
 
         if (i <= 30) {
@@ -102,16 +97,16 @@ public class FalseInformation {
 
         if (i <= 75) {
             Random r = new Random();
-            return "Syndrome de " + getRandomLatinWord();
+            return "Syndrome de " + LatinWordHandler.getInstance().getRandomLatinWord();
         }
 
         if (i <= 93) {
             Faker f = new Faker(Locale.US);
-            return getRandomLatinWord() + " de " + f.animal().name();
+            return LatinWordHandler.getInstance().getRandomLatinWord() + " de " + f.animal().name();
         }
 
         Random r = new Random();
-        String randomLatinWord = getRandomLatinWord();
+        String randomLatinWord = LatinWordHandler.getInstance().getRandomLatinWord();
         String newRandomLatinWord = randomLatinWord.substring(0, randomLatinWord.length() - 3);
         return newRandomLatinWord + "-virus";
     }
