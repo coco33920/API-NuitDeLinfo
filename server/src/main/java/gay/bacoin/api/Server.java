@@ -30,8 +30,8 @@ public class Server {
     //TODO: session client
 
 
-    public static void main(String[] args) throws IOException, InterruptedException {
-        ipAddress("0.0.0.0");
+    public static void main(String[] args) {
+        ipAddress("127.0.0.1");
         port(8080);
         setupRoute();
         System.out.println("Downloading diseases from the official governmental API");
