@@ -1,4 +1,4 @@
-package gay.bacoin.api.objects;
+package gay.bacoin.api.gsonpayloads;
 
 public class Score {
 

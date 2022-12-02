@@ -1,6 +1,6 @@
-package gay.bacoin.api.objects;
+package gay.bacoin.api.gsonpayloads;
 
-import gay.bacoin.api.objects.disease.Disease;
+import gay.bacoin.api.diseases.Disease;
 
 import java.util.HashMap;
 import java.util.Random;

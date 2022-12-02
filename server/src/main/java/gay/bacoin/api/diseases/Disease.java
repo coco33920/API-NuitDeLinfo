@@ -1,4 +1,4 @@
-package gay.bacoin.api.objects.disease;
+package gay.bacoin.api.diseases;
 
 import gay.bacoin.api.WikipediaHandler;
 
