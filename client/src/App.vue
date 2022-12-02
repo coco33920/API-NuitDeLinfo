@@ -3,11 +3,8 @@ import { RouterView } from "vue-router";
 </script>
 
 <template>
-  <RouterView />
+    <RouterView />
 </template>
 
 <style scoped>
-main {
-  max-height: 100vh;
-}
 </style>

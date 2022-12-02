@@ -8,6 +8,17 @@
   </head>
   <body>
     <div id="app"></div>
+
+    <div id="particles-js"></div>
     <script type="module" src="/src/main.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js" defer data-deferred="1"></script>
+    <script type="application/javascript">
+        window.addEventListener('DOMContentLoaded', (event) => {
+            particlesJS.load('particles-js', '/src/assets/particles.json', function() {
+                console.log('callback - particles.js config loaded');
+            });
+        });
+    </script>
   </body>
 </html>
