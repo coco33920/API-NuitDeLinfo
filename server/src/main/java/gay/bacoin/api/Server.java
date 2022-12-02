@@ -49,7 +49,7 @@ public class Server {
 
     //TODO: session client
 
-    private static File getHomeDatabaseFile(){
+    private static File getHomeDatabaseFile() {
         String home = System.getProperty("user.home");
         String delimiter = File.separator;
         File f = new File(home + delimiter + ".gaybacoin" + delimiter);
@@ -68,35 +68,35 @@ public class Server {
         return file;
     }
 
-    private static void setupDatabase(){
+    private static void setupDatabase() {
         String sql = "create table if not exists leaderboard(id integer constraint id primary key autoincrement ,pseudo text,score int);";
         databaseLite.update(sql);
     }
 
-    private static void addScoreInDatabase(Score s){
-        String sql = "select * from leaderboard where pseudo=\""+s.getUsername()+"\"";
+    private static void addScoreInDatabase(Score s) {
+        String sql = "select * from leaderboard where pseudo=\"" + s.getUsername() + "\"";
         String u = "";
         ResultSet rs = databaseLite.getResult(sql);
         try {
-            if(!rs.next()){
-                u = String.format("insert into leaderboard(pseudo,score) VALUES(\"%s\",%d)",s.getUsername(),s.getScore());
-            }else{
-                u = String.format("update leaderboard set score=%d where pseudo=\"%s\"",s.getScore(),s.getUsername());
+            if (!rs.next()) {
+                u = String.format("insert into leaderboard(pseudo,score) VALUES(\"%s\",%d)", s.getUsername(), s.getScore());
+            } else {
+                u = String.format("update leaderboard set score=%d where pseudo=\"%s\"", s.getScore(), s.getUsername());
             }
         } catch (SQLException e) {
-            u = String.format("insert into leaderboard(pseudo,score) VALUES(\"%s\",%d)",s.getUsername(),s.getScore());
+            u = String.format("insert into leaderboard(pseudo,score) VALUES(\"%s\",%d)", s.getUsername(), s.getScore());
         }
         databaseLite.update(u);
     }
 
-    private static ArrayList<Score> getLeaderBoard(){
+    private static ArrayList<Score> getLeaderBoard() {
         String sql = "select * from leaderboard SORT ORDER BY score DESC LIMIT 10";
         ArrayList<Score> s = new ArrayList<>();
         ResultSet rs = databaseLite.getResult(sql);
-        while (true){
+        while (true) {
             try {
                 if (!rs.next()) break;
-                Score sv = new Score(rs.getString("pseudo"),rs.getInt("score"));
+                Score sv = new Score(rs.getString("pseudo"), rs.getInt("score"));
                 s.add(sv);
             } catch (SQLException e) {
                 return s;
@@ -154,12 +154,12 @@ public class Server {
     private static String generateFalseInformation(Disease d) {
         int i = new Random().nextInt(100);
         String name = d.getPreferredTerm();
-        if(name.split(" ").length > 3){
+        if (name.split(" ").length > 3) {
             String[] s = name.split(" ");
             String first = "";
             String last = "";
 
-            if(i <= 20){
+            if (i <= 20) {
                 Faker f = new Faker(Locale.US);
                 Random r = new Random();
                 int randomLatinWordIndex = r.nextInt(latinWords.size());
@@ -167,7 +167,7 @@ public class Server {
                 last = f.name().lastName();
                 s[0] = first;
                 s[s.length - 1] = last;
-                return String.join(" ",s);
+                return String.join(" ", s);
             }
 
             if (i <= 33) {
@@ -176,7 +176,7 @@ public class Server {
                 last = "de " + f.name().lastName();
                 s[0] = first;
                 s[s.length - 1] = last;
-                return String.join(" ",s);
+                return String.join(" ", s);
             }
 
             if (i <= 58) {
@@ -185,7 +185,7 @@ public class Server {
                 last = "de " + f.name().lastName();
                 s[0] = first;
                 s[s.length - 1] = last;
-                return String.join(" ",s);
+                return String.join(" ", s);
             }
 
             if (i <= 78) {
@@ -194,7 +194,7 @@ public class Server {
                 last = "de " + f.name().lastName();
                 s[0] = first;
                 s[s.length - 1] = last;
-                return String.join(" ",s);
+                return String.join(" ", s);
             }
 
             if (i <= 93) {
@@ -205,7 +205,7 @@ public class Server {
                 last = "de " + randomLatinWord;
                 s[0] = first;
                 s[s.length - 1] = last;
-                return String.join(" ",s);
+                return String.join(" ", s);
             }
 
             Faker f = new Faker(Locale.US);
@@ -216,7 +216,7 @@ public class Server {
 
             s[0] = first;
             s[s.length - 1] = last;
-            return String.join(" ",s);
+            return String.join(" ", s);
         }
         if (i <= 20) {
             Faker f = new Faker(Locale.US);
@@ -263,7 +263,7 @@ public class Server {
         return newRandomLatinWord + "-virus";
     }
 
-    private static Disease getRandomDisease(){
+    private static Disease getRandomDisease() {
         Random r = new Random();
         int randomIndex = r.nextInt(allDiseases.size());
         return allDiseases.get(randomIndex);
@@ -304,7 +304,7 @@ public class Server {
             response.type("application/json");
             String first = generateFalseInformation(d);
             String second = generateFalseInformation(d);
-            Game g = new Game(d,first,second);
+            Game g = new Game(d, first, second);
             return new Gson().toJson(g);
         }));
         post("/verify", ((request, response) -> {
@@ -325,25 +325,25 @@ public class Server {
                 p.setDescription(disease.getDefinition());
                 p.setName(disease.getPreferredTerm());
                 p.setCode(disease.getOrphaCode());
-                p.setLink(handler.getWikipediaURL());
+                p.setLink("https://wikipedia.org");
                 p.setDiscoverer("A scientist, I guess");
                 p.setDate("A date, I guess");
             }
             response.type("application/json");
             return new Gson().toJson(p);
         }));
-        post("/score",(request, response) -> {
+        post("/score", (request, response) -> {
             String body = request.body();
             Score s = null;
-            try{
-                s = new Gson().fromJson(body,Score.class);
-                if(s.getUsername() == null){
+            try {
+                s = new Gson().fromJson(body, Score.class);
+                if (s.getUsername() == null) {
                     return "{\"success\":false}";
                 }
                 addScoreInDatabase(s);
                 response.type("application/json");
                 return "{\"success\":true}";
-            }catch (Exception e){
+            } catch (Exception e) {
                 return "{\"success\":false}";
             }
         });
@@ -352,10 +352,16 @@ public class Server {
             response.type("application/json");
             return new Gson().toJson(s);
         });
+        get("/wiki/:name", (request, response) -> {
+            WikipediaHandler wh = new WikipediaHandler(request.params(":name"));
+            String link = wh.getWikipediaURL();
+            response.redirect(link);
+            return "";
+        });
     }
 
-    public static String capitalizeString(String s){
-        return s.substring(0,1).toUpperCase() + s.substring(1);
+    public static String capitalizeString(String s) {
+        return s.substring(0, 1).toUpperCase() + s.substring(1);
     }
 
 }
