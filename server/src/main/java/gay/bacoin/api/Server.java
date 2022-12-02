@@ -1,26 +1,23 @@
 package gay.bacoin.api;
 
-import com.github.javafaker.Faker;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import gay.bacoin.api.database.DatabaseLite;
 import gay.bacoin.api.gsonpayloads.*;
 import gay.bacoin.api.diseases.Disease;
 import gay.bacoin.api.diseases.DiseasesDeserializer;
+import gay.bacoin.api.handlers.DatabaseHandler;
+import gay.bacoin.api.handlers.WikipediaHandler;
 import gay.bacoin.api.vih.Fact;
 import gay.bacoin.api.vih.VIHFacts;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -28,63 +25,15 @@ import static spark.Spark.*;
 
 public class Server {
 
-    private static HttpClient client = HttpClient.newHttpClient();
+    private static final HttpClient client = HttpClient.newHttpClient();
     private static final Type listOfDiseasesType = new TypeToken<ArrayList<Disease>>() {
     }.getType();
     private static ArrayList<Disease> allDiseases = new ArrayList<>();
     private static final HashMap<String, Disease> diseasesMap = new HashMap<>();
-    private static final ArrayList<String> allDiseasesName = new ArrayList<>();
-
     private static ArrayList<String> latinWords;
-    private static DatabaseLite databaseLite;
 
     //TODO: session client
 
-    private static File getHomeDatabaseFile() {
-        String home = System.getProperty("user.home");
-        String delimiter = File.separator;
-        File f = new File(home + delimiter + ".gaybacoin" + delimiter);
-        if (!f.exists())
-            f.mkdirs();
-        File file = new File(f.getAbsolutePath() + delimiter + "home.db");
-        if (!file.exists()) {
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        System.out.println("Database file loaded to " + file.getAbsolutePath());
-        return file;
-    }
-
-    private static void setupDatabase() {
-        String sql = "create table if not exists leaderboard(id integer constraint id primary key autoincrement ,pseudo text,score int);";
-        databaseLite.update(sql);
-    }
-
-    private static void addScoreInDatabase(Score s) {
-        String sql = "select * from leaderboard where pseudo=\"" + s.getUsername() + "\"";
-        String u = String.format("insert into leaderboard(pseudo,score) VALUES(\"%s\",%d)", s.getUsername(), s.getScore());
-        databaseLite.update(u);
-    }
-
-    private static ArrayList<Score> getLeaderBoard() {
-        String sql = "select * from leaderboard SORT ORDER BY score DESC LIMIT 10";
-        ArrayList<Score> s = new ArrayList<>();
-        ResultSet rs = databaseLite.getResult(sql);
-        while (true) {
-            try {
-                if (!rs.next()) break;
-                Score sv = new Score(rs.getString("pseudo"), rs.getInt("score"));
-                s.add(sv);
-            } catch (SQLException e) {
-                return s;
-            }
-        }
-        return s;
-    }
 
     public static void main(String[] args) throws IOException, InterruptedException {
         ipAddress("0.0.0.0");
@@ -118,11 +67,8 @@ public class Server {
             }).map(s -> s.substring(0, 1).toUpperCase() + s.substring(1))).forEach(el -> words.addAll(el.collect(Collectors.toList())));
         latinWords = words;
         System.out.println("All ready to go!");
-        File databaseFile = getHomeDatabaseFile();
-        databaseLite = new DatabaseLite(databaseFile.getAbsolutePath());
-        System.out.println("Database loaded");
-        setupDatabase();
-        System.out.println("Database fully loaded :)");
+        DatabaseHandler.getInstance();
+        System.out.println("Database ready :)");
     }
 
     private static void getAllDiseases() throws IOException, InterruptedException {
@@ -140,7 +86,6 @@ public class Server {
         allDiseases.forEach(
             disease -> diseasesMap.put(disease.getPreferredTerm(), disease)
         );
-        allDiseases.forEach(el -> allDiseasesName.add(el.getPreferredTerm()));
     }
 
     private static Disease getRandomDisease() {
@@ -220,7 +165,7 @@ public class Server {
                 if (s.getUsername() == null) {
                     return "{\"success\":false}";
                 }
-                addScoreInDatabase(s);
+                DatabaseHandler.getInstance().addScoreInDatabase(s);
                 response.type("application/json");
                 return "{\"success\":true}";
             } catch (Exception e) {
@@ -228,7 +173,7 @@ public class Server {
             }
         });
         get("/leaderboard", (request, response) -> {
-            ArrayList<Score> s = getLeaderBoard();
+            ArrayList<Score> s = DatabaseHandler.getInstance().getLeaderBoard();
             response.type("application/json");
             return new Gson().toJson(s);
         });
@@ -253,8 +198,4 @@ public class Server {
         return latinWords;
     }
 
-
-    public static DatabaseLite getDatabaseLite() {
-        return databaseLite;
-    }
 }

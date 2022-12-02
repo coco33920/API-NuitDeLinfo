@@ -1,5 +1,6 @@
-package gay.bacoin.api;
+package gay.bacoin.api.handlers;
 
+import gay.bacoin.api.Server;
 import gay.bacoin.api.utils.ExampleHelpers;
 import org.wikidata.wdtk.datamodel.interfaces.Sites;
 import org.wikidata.wdtk.dumpfiles.DumpProcessingController;

@@ -8,7 +8,7 @@ import java.util.Random;
 
 public class FalseInformation {
 
-    private Disease disease;
+    private final Disease disease;
 
     public FalseInformation(Disease disease){
         this.disease = disease;

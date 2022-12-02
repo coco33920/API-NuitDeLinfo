@@ -1,9 +1,5 @@
 package gay.bacoin.api.diseases;
 
-import gay.bacoin.api.WikipediaHandler;
-
-import java.io.IOException;
-
 public class Disease {
 
     private final String status;
