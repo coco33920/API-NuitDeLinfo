@@ -8,6 +8,8 @@ import gay.bacoin.api.database.DatabaseLite;
 import gay.bacoin.api.objects.*;
 import gay.bacoin.api.objects.disease.Disease;
 import gay.bacoin.api.objects.disease.DiseasesDeserializer;
+import gay.bacoin.api.vih.Fact;
+import gay.bacoin.api.vih.VIHFacts;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
@@ -356,6 +358,10 @@ public class Server {
             String link = wh.getWikipediaURL();
             response.redirect(link);
             return "";
+        });
+        get("/request", (request, response) -> {
+            Fact f = VIHFacts.getInstance().getARandomFact();
+            return new Gson().toJson(f);
         });
     }
 
