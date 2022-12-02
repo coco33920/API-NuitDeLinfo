@@ -351,11 +351,6 @@ public class Server {
             response.type("application/json");
             return new Gson().toJson(s);
         });
-        get("/wiki/:name", (request, response) -> {
-            WikipediaHandler wikipediaHandler = new WikipediaHandler(request.params(":name"));
-            String url = wikipediaHandler.getWikipediaURL();
-            return "{\"url\":\""+url+"\"}";
-        });
     }
 
     public static String capitalizeString(String s){
