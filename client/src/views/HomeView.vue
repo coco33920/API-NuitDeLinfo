@@ -86,6 +86,7 @@ export default defineComponent({
 </script>
 
 <template>
+    <a id="goto_ld" target="_blank" href="/leaderboard">Leaderboard</a>
     <main>
         <div class="score">
             <h2>
@@ -105,7 +106,11 @@ export default defineComponent({
                 >
                     Continuer le jeu
                 </button>
-                <a target="_blank" :href="'http://localhost:8080/wiki/' + this.card_info_title">see more</a>
+                <a
+                    target="_blank"
+                    :href="'http://localhost:8080/wiki/' + this.card_info_title"
+                    >see more</a
+                >
             </div>
         </div>
 
@@ -149,6 +154,25 @@ main {
     place-content: center;
     min-height: 100vh;
     font-size: 2em;
+}
+
+#goto_ld {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 1em;
+    font-size: 14px;
+    font-family: "Inter", sans-serif;
+    font-weight: 500;
+    background: #57120f;
+    border-radius: 16px;
+    border: none;
+    color: white;
+    padding: 1em;
+    text-align: left;
+    transition: 0.2s ease-in-out;
+    z-index: 1000;
+    text-decoration: none;
 }
 
 #info_card {
