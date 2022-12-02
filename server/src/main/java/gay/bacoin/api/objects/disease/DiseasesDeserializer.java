@@ -1,7 +1,9 @@
 package gay.bacoin.api.objects.disease;
 
 import com.google.gson.*;
+import gay.bacoin.api.WikipediaHandler;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 
 public class DiseasesDeserializer implements JsonDeserializer<Disease> {
@@ -12,12 +14,13 @@ public class DiseasesDeserializer implements JsonDeserializer<Disease> {
         String preferredTerm = object.get("Preferred term").getAsString();
         long orpha = object.get("ORPHAcode").getAsLong();
         String def = "None available";
-        try{
+        try {
             def = object.get("Definition").getAsString();
-        }catch (Exception ignored){
+        } catch (Exception ignored) {
 
         }
         String date = object.get("Date").getAsString();
-        return new Disease(status,preferredTerm,orpha,def,date);
+        return new Disease(status, preferredTerm, orpha, def, date, "");
+
     }
 }
