@@ -2,7 +2,7 @@
 import axios from "axios";
 import { defineComponent } from "vue";
 
-axios.get("http://localhost:8080/leaderboard").then((response) => {
+axios.get("https://api.nwa2coco.fr/leaderboard").then((response) => {
     console.log(response.data);
 });
 
@@ -15,7 +15,7 @@ export default defineComponent({
     },
     // add on mounted
     mounted() {
-        axios.get("http://localhost:8080/leaderboard").then((response) => {
+        axios.get("https://api.nwa2coco.fr/leaderboard").then((response) => {
             this.scores = response.data;
         });
     },

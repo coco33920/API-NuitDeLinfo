@@ -1,11 +1,11 @@
-package gay.bacoin.api.objects;
+package gay.bacoin.api.gsonpayloads;
 
 public class Answer {
 
     private final int code;
     private final String answer;
 
-    public Answer(int code, String answer){
+    public Answer(int code, String answer) {
         this.code = code;
         this.answer = answer;
     }

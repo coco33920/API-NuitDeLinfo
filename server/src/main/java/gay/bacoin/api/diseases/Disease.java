@@ -1,8 +1,4 @@
-package gay.bacoin.api.objects.disease;
-
-import gay.bacoin.api.WikipediaHandler;
-
-import java.io.IOException;
+package gay.bacoin.api.diseases;
 
 public class Disease {
 

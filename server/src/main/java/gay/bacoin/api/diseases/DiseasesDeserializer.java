@@ -1,9 +1,7 @@
-package gay.bacoin.api.objects.disease;
+package gay.bacoin.api.diseases;
 
 import com.google.gson.*;
-import gay.bacoin.api.WikipediaHandler;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 
 public class DiseasesDeserializer implements JsonDeserializer<Disease> {
